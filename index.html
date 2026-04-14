@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propratio | Lokale Open Source AI Oplossingen</title>
+    <meta name="description" content="Propratio helpt organisaties en overheidsinstanties met lokale, open source AI-oplossingen. Jouw model, jouw data, jouw controle. Van implementatie tot governance.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* ====== RESET & BASE ====== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #faf9f7;
+            --bg-secondary: #f0eeeb;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8f7f5;
+            --text-primary: #1a1a2e;
+            --text-secondary: #5a5a72;
+            --text-muted: #8e8ea0;
+            --accent-1: #c47a2a;
+            --accent-2: #2d6a4f;
+            --accent-3: #7c5c3c;
+            --accent-glow: rgba(196, 122, 42, 0.08);
+            --accent-glow-2: rgba(45, 106, 79, 0.06);
+            --border: rgba(0, 0, 0, 0.08);
+            --border-hover: rgba(196, 122, 42, 0.35);
+            --radius: 12px;
+            --radius-lg: 20px;
+            --font-main: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ====== AMBIENT BACKGROUND ====== */
+        .bg-ambient {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-ambient .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-ambient .orb-1 {
+            width: 600px; height: 600px;
+            background: #e8c98e;
+            top: -200px; left: -100px;
+            animation-delay: 0s;
+        }
+
+        .bg-ambient .orb-2 {
+            width: 500px; height: 500px;
+            background: #a8d5ba;
+            bottom: -150px; right: -100px;
+            animation-delay: -7s;
+        }
+
+        .bg-ambient .orb-3 {
+            width: 400px; height: 400px;
+            background: #d4a87c;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -14s;
+            opacity: 0.15;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+
+        /* ====== GRID OVERLAY ====== */
+        .grid-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* ====== LAYOUT ====== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        /* ====== NAV ====== */
+        nav {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 16px 0;
+            transition: all 0.3s ease;
+            background: transparent;
+        }
+
+        nav.scrolled {
+            background: rgba(250, 249, 247, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 1px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        nav .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .logo-icon {
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: -0.3px;
+            color: #1a1a2e;
+        }
+
+        .logo-text span {
+            color: var(--accent-1);
+            font-weight: 800;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--accent-1); }
+
+        .lang-toggle {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 4px;
+            cursor: pointer;
+        }
+
+        .lang-btn {
+            padding: 6px 12px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-main);
+        }
+
+        .lang-btn.active {
+            background: var(--accent-1);
+            color: #ffffff;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        /* ====== HERO ====== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 80px;
+        }
+
+        .hero .container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .hero-banner {
+            width: 100%;
+            max-width: 900px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.08), 0 0 60px rgba(196, 122, 42, 0.06);
+        }
+
+        .hero-banner img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--accent-glow);
+            border: 1px solid rgba(0, 212, 170, 0.2);
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent-1);
+            margin-bottom: 32px;
+            font-family: var(--font-mono);
+        }
+
+        .hero-badge .pulse {
+            width: 8px; height: 8px;
+            background: var(--accent-1);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        h1 {
+            font-size: clamp(40px, 6vw, 72px);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+        }
+
+        h1 .gradient {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-3), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h1 {
+            color: var(--text-primary);
+        }
+
+        .hero-sub {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 560px;
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-family: var(--font-main);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-1), #b06a20);
+            color: #ffffff;
+            box-shadow: 0 4px 20px rgba(196, 122, 42, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(196, 122, 42, 0.35);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--border-hover);
+            background: var(--bg-card-hover);
+        }
+
+        /* ====== TERMINAL BLOCK ====== */
+        .hero-terminal {
+            margin-top: 60px;
+            background: #1a1a2e;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            max-width: 600px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 20px;
+            background: rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .terminal-dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: #ff5f57; }
+        .terminal-dot.yellow { background: #febc2e; }
+        .terminal-dot.green { background: #28c840; }
+
+        .terminal-body {
+            padding: 20px;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            line-height: 2;
+        }
+
+        .terminal-line {
+            opacity: 0;
+            animation: typeIn 0.4s ease forwards;
+        }
+
+        .terminal-line:nth-child(1) { animation-delay: 0.5s; }
+        .terminal-line:nth-child(2) { animation-delay: 1.2s; }
+        .terminal-line:nth-child(3) { animation-delay: 1.9s; }
+        .terminal-line:nth-child(4) { animation-delay: 2.6s; }
+
+        @keyframes typeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .terminal-prompt { color: #c47a2a; }
+        .terminal-cmd { color: #e8e8f0; }
+        .terminal-output { color: #8888a0; }
+        .terminal-success { color: #28c840; }
+
+        /* ====== SECTION HEADERS ====== */
+        .section-label {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent-1);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+            line-height: 1.15;
+        }
+
+        .section-desc {
+            font-size: 17px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            line-height: 1.8;
+        }
+
+        /* ====== TAGLINE ====== */
+        .tagline-section {
+            padding: 60px 0;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+
+        .tagline {
+            font-size: clamp(22px, 3vw, 36px);
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .tagline .highlight {
+            color: var(--accent-1);
+            position: relative;
+        }
+
+        .tagline .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0;
+            width: 100%; height: 3px;
+            background: var(--accent-1);
+            border-radius: 2px;
+            opacity: 0.5;
+        }
+
+        /* ====== SERVICES / DIENSTEN ====== */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 60px;
+        }
+
+        /* 6 cards = 2 perfect rows of 3, no overrides needed */
+
+        .service-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 36px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .service-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
+        }
+
+        .service-card:hover::before { opacity: 1; }
+
+        .service-icon {
+            width: 52px; height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            background: var(--accent-glow);
+            border: 1px solid rgba(0, 212, 170, 0.15);
+        }
+
+        .service-card:nth-child(2) .service-icon {
+            background: var(--accent-glow-2);
+            border-color: rgba(45, 106, 79, 0.15);
+        }
+
+        .service-card:nth-child(3) .service-icon {
+            background: rgba(124, 92, 60, 0.08);
+            border-color: rgba(124, 92, 60, 0.15);
+        }
+
+        .service-card:nth-child(4) .service-icon {
+            background: rgba(45, 80, 120, 0.08);
+            border-color: rgba(45, 80, 120, 0.15);
+        }
+
+        .service-card:nth-child(5) .service-icon {
+            background: rgba(100, 60, 120, 0.08);
+            border-color: rgba(100, 60, 120, 0.15);
+        }
+
+        .service-card:nth-child(6) .service-icon {
+            background: rgba(40, 110, 100, 0.08);
+            border-color: rgba(40, 110, 100, 0.15);
+        }
+
+        .service-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        .service-card p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .service-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .service-tag {
+            padding: 4px 12px;
+            background: rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+        }
+
+        /* ====== WHY / WAAROM ====== */
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-top: 60px;
+        }
+
+        .why-item {
+            text-align: center;
+            padding: 40px 24px;
+        }
+
+        .why-number {
+            font-family: var(--font-mono);
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        .why-item h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .why-item p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* ====== APPROACH / AANPAK ====== */
+        .approach-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-top: 60px;
+        }
+
+        .approach-step {
+            position: relative;
+            padding: 32px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        .step-number {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--accent-1);
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-number::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .approach-step h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .approach-step p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* ====== GOVERNANCE ====== */
+        .governance {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .governance-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .governance-text .quote {
+            font-size: 20px;
+            font-weight: 600;
+            font-style: italic;
+            color: var(--accent-1);
+            border-left: 3px solid var(--accent-1);
+            padding-left: 20px;
+            margin: 28px 0;
+        }
+
+        .governance-points {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .governance-points li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .governance-points .check {
+            color: var(--accent-2);
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .governance-visual {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+        }
+
+        .comparison-table {
+            width: 100%;
+        }
+
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .comparison-row:last-child { border-bottom: none; }
+
+        .comparison-row.header {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: var(--font-mono);
+        }
+
+        .comparison-row span:first-child { color: var(--text-secondary); }
+        .comparison-row .yes { color: var(--accent-2); font-weight: 600; }
+        .comparison-row .no { color: #c0392b; }
+
+        /* ====== CONTACT ====== */
+        .contact {
+            padding-bottom: 120px;
+        }
+
+        .contact-wrapper {
+            max-width: 640px;
+            margin: 60px auto 0;
+        }
+
+        .contact-form {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-family: var(--font-mono);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 15px;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--accent-1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group select option {
+            background: var(--bg-card);
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent-1), #b06a20);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: var(--font-main);
+            transition: all 0.3s;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(196, 122, 42, 0.25);
+        }
+
+        /* ====== FOOTER ====== */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover { color: var(--accent-1); }
+
+        /* ====== ANIMATIONS ====== */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ====== MOBILE NAV ====== */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100vh;
+            background: rgba(250, 249, 247, 0.97);
+            z-index: 99;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .mobile-nav.open { display: flex; }
+
+        .mobile-nav a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .mobile-nav-close {
+            position: absolute;
+            top: 20px; right: 24px;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        /* Mobile why-item override for light theme */
+
+        /* ====== RESPONSIVE ====== */
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: block; }
+
+            .governance-content {
+                grid-template-columns: 1fr;
+            }
+
+            .why-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .why-item {
+                text-align: left;
+                padding: 24px;
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                display: flex;
+                gap: 20px;
+                align-items: center;
+            }
+
+            .why-number {
+                font-size: 32px;
+                margin-bottom: 0;
+                min-width: 60px;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            section { padding: 60px 0; }
+
+            .hero { min-height: auto; padding: 120px 0 60px; }
+        }
+
+        @media (max-width: 480px) {
+            h1 { letter-spacing: -1px; }
+            .hero-cta { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-ambient">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+</div>
+<div class="grid-overlay"></div>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+    <button class="mobile-nav-close" onclick="closeMobileMenu()">&times;</button>
+    <a href="#diensten" onclick="closeMobileMenu()" data-nl="Diensten" data-en="Services">Diensten</a>
+    <a href="#aanpak" onclick="closeMobileMenu()" data-nl="Aanpak" data-en="Approach">Aanpak</a>
+    <a href="#governance" onclick="closeMobileMenu()" data-nl="Governance" data-en="Governance">Governance</a>
+    <a href="#contact" onclick="closeMobileMenu()" data-nl="Contact" data-en="Contact">Contact</a>
+    <div class="lang-toggle" style="margin-top: 16px;">
+        <button class="lang-btn active" onclick="setLang('nl')">NL</button>
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+</div>
+
+<!-- Navigation -->
+<nav id="navbar">
+    <div class="container">
+        <a href="#" class="logo">
+            <div class="logo-icon"><img src="assets/logo.svg" alt="Propratio logo"></div>
+            <div class="logo-text">Prop<span>ratio</span></div>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#diensten" data-nl="Diensten" data-en="Services">Diensten</a></li>
+            <li><a href="#aanpak" data-nl="Aanpak" data-en="Approach">Aanpak</a></li>
+            <li><a href="#governance" data-nl="Governance" data-en="Governance">Governance</a></li>
+            <li><a href="#contact" data-nl="Contact" data-en="Contact">Contact</a></li>
+            <li>
+                <div class="lang-toggle">
+                    <button class="lang-btn active" onclick="setLang('nl')">NL</button>
+                    <button class="lang-btn" onclick="setLang('en')">EN</button>
+                </div>
+            </li>
+        </ul>
+        <button class="mobile-menu-btn" onclick="openMobileMenu()">&#9776;</button>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-banner fade-in">
+            <img src="assets/banner.svg" alt="Propratio banner">
+        </div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <div class="pulse"></div>
+                <span data-nl="Open Source AI &middot; Lokaal &middot; Veilig" data-en="Open Source AI &middot; Local &middot; Secure">Open Source AI &middot; Lokaal &middot; Veilig</span>
+            </div>
+            <h1>
+                <span data-nl="Jouw model," data-en="Your model,">Jouw model,</span><br>
+                <span class="gradient" data-nl="jouw data." data-en="your data.">jouw data.</span>
+            </h1>
+            <p class="hero-sub" data-nl="Wij helpen organisaties en overheidsinstanties met het implementeren van lokale, open source AI-oplossingen. Geen data naar buiten, geen vendor lock-in, geen onverwachte kosten." data-en="We help organizations and government agencies implement local, open source AI solutions. No data leaving your environment, no vendor lock-in, no unexpected costs.">
+                Wij helpen organisaties en overheidsinstanties met het implementeren van lokale, open source AI-oplossingen. Geen data naar buiten, geen vendor lock-in, geen onverwachte kosten.
+            </p>
+            <div class="hero-cta">
+                <a href="#contact" class="btn btn-primary" data-nl="Neem contact op" data-en="Get in touch">Neem contact op</a>
+                <a href="#diensten" class="btn btn-secondary" data-nl="Bekijk diensten &darr;" data-en="View services &darr;">Bekijk diensten &darr;</a>
+            </div>
+        </div>
+        <div class="hero-terminal">
+            <div class="terminal-header">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-body">
+                <div class="terminal-line"><span class="terminal-prompt">$ </span><span class="terminal-cmd">ollama run qwen3.5-122b</span></div>
+                <div class="terminal-line"><span class="terminal-output">pulling model... done</span></div>
+                <div class="terminal-line"><span class="terminal-output">loading model into memory...</span></div>
+                <div class="terminal-line"><span class="terminal-success">&#10003; Model ready. Running locally. Your data stays yours.</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Tagline -->
+<section class="tagline-section">
+    <div class="container">
+        <p class="tagline" data-nl="Geen API-kosten. Geen data die de deur uit gaat. Geen afhankelijkheid. <span class='highlight'>Volledige controle.</span>" data-en="No API costs. No data leaving your environment. No dependencies. <span class='highlight'>Full control.</span>">
+            Geen API-kosten. Geen data die de deur uit gaat. Geen afhankelijkheid. <span class="highlight">Volledige controle.</span>
+        </p>
+    </div>
+</section>
+
+<!-- Services -->
+<section id="diensten">
+    <div class="container">
+        <div class="fade-in">
+            <p class="section-label" data-nl="// Diensten" data-en="// Services">// Diensten</p>
+            <h2 data-nl="Wat wij doen" data-en="What we do">Wat wij doen</h2>
+            <p class="section-desc" data-nl="Van strategie tot werkende AI-omgeving. Wij begeleiden organisaties bij elke stap van het traject." data-en="From strategy to a working AI environment. We guide organizations through every step of the process.">
+                Van strategie tot werkende AI-omgeving. Wij begeleiden organisaties bij elke stap van het traject.
+            </p>
+        </div>
+        <div class="services-grid fade-in">
+            <!-- Service 1: Lokale AI-implementatie -->
+            <div class="service-card">
+                <div class="service-icon">&#9881;</div>
+                <h3 data-nl="Lokale AI-implementatie" data-en="Local AI Implementation">Lokale AI-implementatie</h3>
+                <p data-nl="Wij installeren en configureren open source AI-modellen op jouw eigen infrastructuur, on-premise of in een afgesloten private cloud. Geen data die naar externe servers gaat. Volledige controle, maximale privacy." data-en="We install and configure open source AI models on your own infrastructure, on-premise or in an isolated private cloud. No data sent to external servers. Full control, maximum privacy.">
+                    Wij installeren en configureren open source AI-modellen op jouw eigen infrastructuur, on-premise of in een afgesloten private cloud. Geen data die naar externe servers gaat. Volledige controle, maximale privacy.
+                </p>
+                <div class="service-tags">
+                    <span class="service-tag">On-premise</span>
+                    <span class="service-tag">Private Cloud</span>
+                    <span class="service-tag">Ollama</span>
+                    <span class="service-tag">Open Source LLM</span>
+                </div>
+            </div>
+            <!-- Service 2: Managed lokale AI-oplossingen -->
+            <div class="service-card">
+                <div class="service-icon">&#128736;</div>
+                <h3 data-nl="Managed Lokale AI-oplossingen" data-en="Managed Local AI Solutions">Managed Lokale AI-oplossingen</h3>
+                <p data-nl="Wij nemen het beheer van jouw lokale AI-omgeving volledig uit handen. Updates, monitoring, beveiliging en schaalbaarheid: wij zorgen dat jouw AI altijd optimaal presteert zonder dat jij er naar om hoeft te kijken." data-en="We fully manage your local AI environment. Updates, monitoring, security and scalability: we ensure your AI always performs optimally without you having to worry about it.">
+                    Wij nemen het beheer van jouw lokale AI-omgeving volledig uit handen. Updates, monitoring, beveiliging en schaalbaarheid: wij zorgen dat jouw AI altijd optimaal presteert zonder dat jij er naar om hoeft te kijken.
+                </p>
+                <div class="service-tags">
+                    <span class="service-tag">Beheer</span>
+                    <span class="service-tag">Monitoring</span>
+                    <span class="service-tag">Updates</span>
+                    <span class="service-tag">SLA</span>
+                </div>
+            </div>
+            <!-- Service 3: AI-strategie en governance-advies -->
+            <div class="service-card">
+                <div class="service-icon">&#9733;</div>
+                <h3 data-nl="AI-strategie &amp; Governance-advies" data-en="AI Strategy &amp; Governance Advice">AI-strategie &amp; Governance-advies</h3>
+                <p data-nl="Welk model past bij jouw organisatie en use-case? Hoe ga je om met dataprivacy, de AVG en vendor-onafhankelijkheid? Wij helpen je een solide AI-strategie en governanceframework op te bouwen dat aansluit op jouw ambities en risicotolerantie." data-en="Which model fits your organisation and use case? How do you handle data privacy, GDPR and vendor independence? We help you build a solid AI strategy and governance framework aligned with your ambitions and risk tolerance.">
+                    Welk model past bij jouw organisatie en use-case? Hoe ga je om met dataprivacy, de AVG en vendor-onafhankelijkheid? Wij helpen je een solide AI-strategie en governanceframework op te bouwen dat aansluit op jouw ambities en risicotolerantie.
+                </p>
+                <div class="service-tags">
+                    <span class="service-tag">AVG / GDPR</span>
+                    <span class="service-tag">Compliance</span>
+                    <span class="service-tag">Governance</span>
+                    <span class="service-tag">Roadmap</span>
+                </div>
+            </div>
+            <!-- Service 4: Model-optimalisatie -->
+            <div class="service-card">
+                <div class="service-icon">&#9879;</div>
+                <h3 data-nl="Model-optimalisatie" data-en="Model Optimisation">Model-optimalisatie</h3>
+                <p data-nl="Generieke modellen presteren zelden optimaal voor jouw domein. Wij bouwen kwalitatieve trainingsdata en fine-tunen modellen zodat ze jouw vakjargon, processen en tone-of-voice begrijpen en er slim op reageren." data-en="Generic models rarely perform optimally for your domain. We build quality training data and fine-tune models so they understand your industry jargon, processes and tone of voice and respond intelligently to them.">
+                    Generieke modellen presteren zelden optimaal voor jouw domein. Wij bouwen kwalitatieve trainingsdata en fine-tunen modellen zodat ze jouw vakjargon, processen en tone-of-voice begrijpen en er slim op reageren.
+                </p>
+                <div class="service-tags">
+                    <span class="service-tag">Fine-tuning</span>
+                    <span class="service-tag">Dataset curation</span>
+                    <span class="service-tag">RAG</span>
+                    <span class="service-tag">RLHF</span>
+                </div>
+            </div>
+            <!-- Service 5: Generative AI Workflows -->
+            <div class="service-card">
+                <div class="service-icon">&#9863;</div>
+                <h3 data-nl="Generative AI Workflows" data-en="Generative AI Workflows">Generative AI Workflows</h3>
+                <p data-nl="Van AI-gegenereerde branded video's tot geautomatiseerde code-assistentie. Wij bouwen workflows met open source tools zoals ComfyUI, Qwen, Wan en meer." data-en="From AI-generated branded videos to automated code assistance. We build workflows with open source tools like ComfyUI, Qwen, Wan and more.">
+                    Van AI-gegenereerde branded video's tot geautomatiseerde code-assistentie. Wij bouwen workflows met open source tools zoals ComfyUI, Qwen, Wan en meer.
+                </p>
+                <div class="service-tags">
+                    <span class="service-tag">ComfyUI</span>
+                    <span class="service-tag">Text-to-Video</span>
+                    <span class="service-tag">Text-to-Image</span>
+                    <span class="service-tag">Agents</span>
+                </div>
+            </div>
+            <!-- Service 6: Integratie van AI-workflows -->
+            <div class="service-card">
+                <div class="service-icon">&#9863;</div>
+                <h3 data-nl="Integratie van AI-workflows" data-en="AI Workflow Integration">Integratie van AI-workflows</h3>
+                <p data-nl="AI is pas waardevol als het naadloos aansluit op jouw bestaande bedrijfsprocessen. Wij ontwerpen en bouwen AI-workflows die integreren met jouw tools, systemen en teams: van documentverwerking en klantenservice tot geautomatiseerde rapportage." data-en="AI is only valuable when it connects seamlessly with your existing business processes. We design and build AI workflows that integrate with your tools, systems and teams — from document processing and customer service to automated reporting.">
+                    AI is pas waardevol als het naadloos aansluit op jouw bestaande bedrijfsprocessen. Wij ontwerpen en bouwen AI-workflows die integreren met jouw tools, systemen en teams: van documentverwerking en klantenservice tot geautomatiseerde rapportage.
+                </p>
+                <div class="service-tags">
+                    <span class="service-tag">Automatisering</span>
+                    <span class="service-tag">API-integratie</span>
+                    <span class="service-tag">n8n / Make</span>
+                    <span class="service-tag">Business Process</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why -->
+<section>
+    <div class="container">
+        <div class="why-grid fade-in">
+            <div class="why-item">
+                <div class="why-number">100%</div>
+                <div>
+                    <h3 data-nl="Data in eigen beheer" data-en="Data under your control">Data in eigen beheer</h3>
+                    <p data-nl="Jouw data verlaat nooit jouw omgeving" data-en="Your data never leaves your environment">Jouw data verlaat nooit jouw omgeving</p>
+                </div>
+            </div>
+            <div class="why-item">
+                <div class="why-number">&euro;0</div>
+                <div>
+                    <h3 data-nl="API-kosten" data-en="API costs">API-kosten</h3>
+                    <p data-nl="Open source modellen, geen kosten per aanvraag" data-en="Open source models, no cost per request">Open source modellen, geen kosten per aanvraag</p>
+                </div>
+            </div>
+            <div class="why-item">
+                <div class="why-number">24/7</div>
+                <div>
+                    <h3 data-nl="Beschikbaar" data-en="Available">Beschikbaar</h3>
+                    <p data-nl="Jouw model draait altijd, zonder limiet" data-en="Your model runs always, without limits">Jouw model draait altijd, zonder limiet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Target audience / Voor wie -->
+<section id="voor-wie" class="governance">
+    <div class="container">
+        <div class="fade-in">
+            <p class="section-label" data-nl="// Voor wie" data-en="// Who we help">// Voor wie</p>
+            <h2 data-nl="Organisaties die wij helpen" data-en="Organizations we help">Organisaties die wij helpen</h2>
+            <p class="section-desc" data-nl="Propratio werkt met organisaties waar dataprivacy, compliance en digitale autonomie geen luxe zijn, maar een fundament." data-en="Propratio works with organisations where data privacy, compliance and digital autonomy aren't luxuries — they're a foundation.">
+                Propratio werkt met organisaties waar dataprivacy, compliance en digitale autonomie geen luxe zijn, maar een fundament.
+            </p>
+        </div>
+        <div class="services-grid fade-in" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+            <div class="service-card" style="padding: 28px;">
+                <div class="service-icon">&#127963;</div>
+                <h3 data-nl="Overheidsinstanties" data-en="Government agencies">Overheidsinstanties</h3>
+                <p data-nl="Gemeenten, provincies en rijksoverheid die AI willen inzetten met volledige controle over burgerdata en compliance met wet- en regelgeving." data-en="Municipalities, provinces and national government agencies that want to deploy AI with full control over citizen data and regulatory compliance.">
+                    Gemeenten, provincies en rijksoverheid die AI willen inzetten met volledige controle over burgerdata en compliance met wet- en regelgeving.
+                </p>
+            </div>
+            <div class="service-card" style="padding: 28px;">
+                <div class="service-icon">&#9874;</div>
+                <h3 data-nl="MKB &amp; Ondernemers" data-en="SMEs &amp; Entrepreneurs">MKB &amp; Ondernemers</h3>
+                <p data-nl="Bedrijven die AI willen inzetten zonder afhankelijkheid van dure abonnementen of data die naar externe partijen gaat." data-en="Businesses that want to use AI without depending on expensive subscriptions or data going to external parties.">
+                    Bedrijven die AI willen inzetten zonder afhankelijkheid van dure abonnementen of data die naar externe partijen gaat.
+                </p>
+            </div>
+            <div class="service-card" style="padding: 28px;">
+                <div class="service-icon">&#9883;</div>
+                <h3 data-nl="Zorg &amp; Onderwijs" data-en="Healthcare &amp; Education">Zorg &amp; Onderwijs</h3>
+                <p data-nl="Sectoren waar gevoelige data centraal staat en waar de inzet van AI aan strenge privacy-eisen moet voldoen." data-en="Sectors where sensitive data is central and where AI deployment must meet strict privacy requirements.">
+                    Sectoren waar gevoelige data centraal staat en waar de inzet van AI aan strenge privacy-eisen moet voldoen.
+                </p>
+            </div>
+            <div class="service-card" style="padding: 28px;">
+                <div class="service-icon">&#9878;</div>
+                <h3 data-nl="Juridisch &amp; Financieel" data-en="Legal &amp; Financial">Juridisch &amp; Financieel</h3>
+                <p data-nl="Organisaties die werken met vertrouwelijke klantgegevens, contracten en IP-gevoelige informatie." data-en="Organizations working with confidential client data, contracts and IP-sensitive information.">
+                    Organisaties die werken met vertrouwelijke klantgegevens, contracten en IP-gevoelige informatie.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Approach -->
+<section id="aanpak">
+    <div class="container">
+        <div class="fade-in">
+            <p class="section-label" data-nl="// Aanpak" data-en="// Approach">// Aanpak</p>
+            <h2 data-nl="Hoe wij werken" data-en="How we work">Hoe wij werken</h2>
+            <p class="section-desc" data-nl="Geen eindeloze trajecten. Van het eerste gesprek tot een werkende AI-omgeving: gestructureerd, snel en zonder verrassingen." data-en="No endless projects. From the first conversation to a working AI environment — structured, fast and without surprises.">
+                Geen eindeloze trajecten. Van het eerste gesprek tot een werkende AI-omgeving: gestructureerd, snel en zonder verrassingen.
+            </p>
+        </div>
+        <div class="approach-steps fade-in">
+            <div class="approach-step">
+                <div class="step-number">01</div>
+                <h3 data-nl="Inventarisatie" data-en="Assessment">Inventarisatie</h3>
+                <p data-nl="We brengen jouw situatie in kaart: use-case, databronnen, privacyeisen en technische randvoorwaarden. Geen generieke intake, maar een scherpe analyse op maat." data-en="We map your situation: use case, data sources, privacy requirements and technical constraints. No generic intake — a sharp, tailored analysis.">
+                    We brengen jouw situatie in kaart: use-case, databronnen, privacyeisen en technische randvoorwaarden. Geen generieke intake, maar een scherpe analyse op maat.
+                </p>
+            </div>
+            <div class="approach-step">
+                <div class="step-number">02</div>
+                <h3 data-nl="Modelselectie" data-en="Model selection">Modelselectie</h3>
+                <p data-nl="Op basis van jouw eisen selecteren wij het meest geschikte open source model. Qwen, Llama, Mistral of een domeinspecifiek alternatief: altijd onderbouwd, nooit willekeurig." data-en="Based on your requirements we select the most suitable open source model. Qwen, Llama, Mistral or a domain-specific alternative — always substantiated, never arbitrary.">
+                    Op basis van jouw eisen selecteren wij het meest geschikte open source model. Qwen, Llama, Mistral of een domeinspecifiek alternatief: altijd onderbouwd, nooit willekeurig.
+                </p>
+            </div>
+            <div class="approach-step">
+                <div class="step-number">03</div>
+                <h3 data-nl="Implementatie" data-en="Implementation">Implementatie</h3>
+                <p data-nl="On-premise of in een volledig afgesloten private cloud. Propratio regelt de installatie, configuratie en integratie, totdat alles draait zoals het moet." data-en="On-premise or in a fully isolated private cloud. Propratio handles installation, configuration and integration — until everything runs exactly as it should.">
+                    On-premise of in een volledig afgesloten private cloud. Propratio regelt de installatie, configuratie en integratie, totdat alles draait zoals het moet.
+                </p>
+            </div>
+            <div class="approach-step">
+                <div class="step-number">04</div>
+                <h3 data-nl="Overdracht &amp; Support" data-en="Handover &amp; Support">Overdracht &amp; Support</h3>
+                <p data-nl="Heldere documentatie, gerichte kennisoverdracht en nazorg. Jouw team wordt zelfstandig, of Propratio blijft betrokken via een managed contract." data-en="Clear documentation, targeted knowledge transfer and aftercare. Your team becomes self-sufficient — or Propratio stays involved via a managed contract.">
+                    Heldere documentatie, gerichte kennisoverdracht en nazorg. Jouw team wordt zelfstandig, of Propratio blijft betrokken via een managed contract.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Governance -->
+<section id="governance" class="governance">
+    <div class="container">
+        <div class="governance-content fade-in">
+            <div class="governance-text">
+                <p class="section-label" data-nl="// Governance" data-en="// Governance">// Governance</p>
+                <h2 data-nl="AI is een governance-keuze" data-en="AI is a governance choice">AI is een governance-keuze</h2>
+                <div class="quote" data-nl="&ldquo;De vraag is niet óf je AI gebruikt. De vraag is of je weet wat er met jouw data gebeurt als je dat doet.&rdquo;" data-en="&ldquo;The question isn't whether you use AI. The question is whether you know what happens to your data when you do.&rdquo;">
+                    &ldquo;De vraag is niet óf je AI gebruikt. De vraag is of je weet wat er met jouw data gebeurt als je dat doet.&rdquo;
+                </div>
+                <ul class="governance-points">
+                    <li>
+                        <span class="check">&#10003;</span>
+                        <span data-nl="Data verlaat je organisatie bij externe LLM's" data-en="Data leaves your organization with external LLMs">Data verlaat je organisatie bij externe LLM's</span>
+                    </li>
+                    <li>
+                        <span class="check">&#10003;</span>
+                        <span data-nl="Buitenlandse wetgeving zoals de CLOUD Act kan van toepassing zijn" data-en="Foreign legislation like the CLOUD Act may apply">Buitenlandse wetgeving zoals de CLOUD Act kan van toepassing zijn</span>
+                    </li>
+                    <li>
+                        <span class="check">&#10003;</span>
+                        <span data-nl="Afhankelijkheid van pricing, roadmap en policies van derden" data-en="Dependency on third-party pricing, roadmap and policies">Afhankelijkheid van pricing, roadmap en policies van derden</span>
+                    </li>
+                    <li>
+                        <span class="check">&#10003;</span>
+                        <span data-nl="Lokale open source AI geeft autonomie en controle terug" data-en="Local open source AI gives back autonomy and control">Lokale open source AI geeft autonomie en controle terug</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="governance-visual">
+                <div class="comparison-table">
+                    <div class="comparison-row header">
+                        <span></span>
+                        <span data-nl="Extern" data-en="External">Extern</span>
+                        <span data-nl="Lokaal" data-en="Local">Lokaal</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span data-nl="Data privacy" data-en="Data privacy">Data privacy</span>
+                        <span class="no">&#10007;</span>
+                        <span class="yes">&#10003;</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span>API-kosten</span>
+                        <span class="no" data-nl="Per aanvraag" data-en="Per request">Per aanvraag</span>
+                        <span class="yes" data-nl="Geen" data-en="None">Geen</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span data-nl="Controle" data-en="Control">Controle</span>
+                        <span class="no" data-nl="Beperkt" data-en="Limited">Beperkt</span>
+                        <span class="yes" data-nl="Volledig" data-en="Full">Volledig</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span>Compliance</span>
+                        <span class="no" data-nl="Complex" data-en="Complex">Complex</span>
+                        <span class="yes" data-nl="Eenvoudig" data-en="Simple">Eenvoudig</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span>Vendor lock-in</span>
+                        <span class="no" data-nl="Ja" data-en="Yes">Ja</span>
+                        <span class="yes" data-nl="Nee" data-en="No">Nee</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span data-nl="Snelheid" data-en="Speed">Snelheid</span>
+                        <span class="yes" data-nl="Snel" data-en="Fast">Snel</span>
+                        <span data-nl="Goed" data-en="Good" style="color: var(--text-secondary);">Goed</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact -->
+<section id="contact" class="contact">
+    <div class="container">
+        <div class="fade-in">
+            <p class="section-label">// Contact</p>
+            <h2 data-nl="Laten we praten" data-en="Let's talk">Laten we praten</h2>
+            <p class="section-desc" data-nl="Benieuwd wat lokale AI concreet voor jouw organisatie kan betekenen? Stuur een bericht, we denken graag vrijblijvend met je mee." data-en="Curious what local AI can concretely mean for your organisation? Send us a message — we're happy to think along with you, no strings attached.">
+                Benieuwd wat lokale AI concreet voor jouw organisatie kan betekenen? Stuur een bericht, we denken graag vrijblijvend met je mee.
+            </p>
+        </div>
+        <div class="contact-wrapper fade-in">
+            <div class="contact-form">
+                <form id="contactForm" onsubmit="handleSubmit(event)">
+                    <div class="form-group">
+                        <label data-nl="NAAM" data-en="NAME">NAAM</label>
+                        <input type="text" name="naam" required placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label>E-MAIL</label>
+                        <input type="email" name="email" required placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label data-nl="ORGANISATIE" data-en="ORGANIZATION">ORGANISATIE</label>
+                        <input type="text" name="organisatie" placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label data-nl="WAAR KUNNEN WE BIJ HELPEN?" data-en="HOW CAN WE HELP?">WAAR KUNNEN WE BIJ HELPEN?</label>
+                        <select name="onderwerp">
+                            <option value="implementatie" data-nl="Lokale AI-implementatie" data-en="Local AI Implementation">Lokale AI-implementatie</option>
+                            <option value="managed" data-nl="Managed Lokale AI-oplossingen" data-en="Managed Local AI Solutions">Managed Lokale AI-oplossingen</option>
+                            <option value="strategie" data-nl="AI-strategie &amp; Governance-advies" data-en="AI Strategy &amp; Governance Advice">AI-strategie &amp; Governance-advies</option>
+                            <option value="optimalisatie" data-nl="Model-optimalisatie" data-en="Model Optimisation">Model-optimalisatie</option>
+                            <option value="workflows" data-nl="Integratie van AI-workflows" data-en="AI Workflow Integration">Integratie van AI-workflows</option>
+                            <option value="anders" data-nl="Anders" data-en="Other">Anders</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-nl="BERICHT" data-en="MESSAGE">BERICHT</label>
+                        <textarea name="bericht" required placeholder=""></textarea>
+                    </div>
+                    <button type="submit" class="form-submit" data-nl="Verstuur bericht" data-en="Send message">Verstuur bericht</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-left">
+                &copy; 2026 Propratio. <span data-nl="Jouw model, jouw data." data-en="Your model, your data.">Jouw model, jouw data.</span>
+            </div>
+            <div class="footer-links">
+                <a href="#contact" data-nl="Contact" data-en="Contact">Contact</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // ====== LANGUAGE SWITCHING ======
+    let currentLang = 'nl';
+
+    function setLang(lang) {
+        currentLang = lang;
+        document.documentElement.lang = lang;
+
+        // Update all lang toggle buttons
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.textContent === lang.toUpperCase());
+        });
+
+        // Update all elements with data-nl / data-en
+        document.querySelectorAll('[data-nl][data-en]').forEach(el => {
+            const text = el.getAttribute('data-' + lang);
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                el.placeholder = text;
+            } else if (el.tagName === 'OPTION') {
+                el.textContent = text;
+            } else {
+                el.innerHTML = text;
+            }
+        });
+    }
+
+    // ====== NAVBAR SCROLL ======
+    window.addEventListener('scroll', () => {
+        const nav = document.getElementById('navbar');
+        if (window.scrollY > 50) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
+    });
+
+    // ====== MOBILE MENU ======
+    function openMobileMenu() {
+        document.getElementById('mobileNav').classList.add('open');
+    }
+
+    function closeMobileMenu() {
+        document.getElementById('mobileNav').classList.remove('open');
+    }
+
+    // ====== SCROLL ANIMATIONS ======
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ====== FORM HANDLING ======
+    function handleSubmit(e) {
+        e.preventDefault();
+        const form = e.target;
+        const btn = form.querySelector('.form-submit');
+        const originalText = btn.textContent;
+
+        btn.textContent = currentLang === 'nl' ? 'Verstuurd!' : 'Sent!';
+        btn.style.background = '#2d6a4f';
+
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = '';
+            form.reset();
+        }, 2500);
+    }
+
+    // ====== SMOOTH SCROLL for anchor links ======
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
