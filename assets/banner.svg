@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5f0ea"/>
+      <stop offset="50%" stop-color="#ece5db"/>
+      <stop offset="100%" stop-color="#f5f0ea"/>
+    </linearGradient>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c47a2a"/>
+      <stop offset="100%" stop-color="#2d6a4f"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c47a2a" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#c47a2a" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#2d6a4f" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="g3" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c47a2a" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#2d6a4f" stop-opacity="0.05"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="30%" cy="50%" r="40%">
+      <stop offset="0%" stop-color="#e8c98e" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#e8c98e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="75%" cy="40%" r="35%">
+      <stop offset="0%" stop-color="#a8d5ba" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#a8d5ba" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softShadow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Warm background -->
+  <rect width="1200" height="500" fill="url(#bg)"/>
+
+  <!-- Soft ambient glow -->
+  <ellipse cx="360" cy="250" rx="350" ry="250" fill="url(#glow1)"/>
+  <ellipse cx="900" cy="200" rx="300" ry="220" fill="url(#glow2)"/>
+
+  <!-- Subtle grid -->
+  <g opacity="0.06" stroke="#7c5c3c" stroke-width="0.5">
+    <line x1="0" y1="50" x2="1200" y2="50"/>
+    <line x1="0" y1="100" x2="1200" y2="100"/>
+    <line x1="0" y1="150" x2="1200" y2="150"/>
+    <line x1="0" y1="200" x2="1200" y2="200"/>
+    <line x1="0" y1="250" x2="1200" y2="250"/>
+    <line x1="0" y1="300" x2="1200" y2="300"/>
+    <line x1="0" y1="350" x2="1200" y2="350"/>
+    <line x1="0" y1="400" x2="1200" y2="400"/>
+    <line x1="0" y1="450" x2="1200" y2="450"/>
+    <line x1="100" y1="0" x2="100" y2="500"/>
+    <line x1="200" y1="0" x2="200" y2="500"/>
+    <line x1="300" y1="0" x2="300" y2="500"/>
+    <line x1="400" y1="0" x2="400" y2="500"/>
+    <line x1="500" y1="0" x2="500" y2="500"/>
+    <line x1="600" y1="0" x2="600" y2="500"/>
+    <line x1="700" y1="0" x2="700" y2="500"/>
+    <line x1="800" y1="0" x2="800" y2="500"/>
+    <line x1="900" y1="0" x2="900" y2="500"/>
+    <line x1="1000" y1="0" x2="1000" y2="500"/>
+    <line x1="1100" y1="0" x2="1100" y2="500"/>
+  </g>
+
+  <!-- Central AI network visualization -->
+
+  <!-- Large central hexagon -->
+  <g transform="translate(600, 240)">
+    <polygon points="0,-80 69,-40 69,40 0,80 -69,40 -69,-40" fill="none" stroke="url(#g1)" stroke-width="1.5" opacity="0.3"/>
+    <polygon points="0,-55 48,-27.5 48,27.5 0,55 -48,27.5 -48,-27.5" fill="none" stroke="url(#g1)" stroke-width="1" opacity="0.2"/>
+    <polygon points="0,-30 26,-15 26,15 0,30 -26,15 -26,-15" fill="url(#g3)" stroke="url(#g1)" stroke-width="1.2" opacity="0.4"/>
+    <!-- Core glow -->
+    <circle cx="0" cy="0" r="10" fill="#c47a2a" opacity="0.15" filter="url(#glow)"/>
+    <circle cx="0" cy="0" r="6" fill="url(#g1)" opacity="0.6" filter="url(#glow)"/>
+    <circle cx="0" cy="0" r="3" fill="#c47a2a" opacity="0.9"/>
+  </g>
+
+  <!-- Connection lines -->
+  <g stroke-width="1" opacity="0.3">
+    <line x1="531" y1="240" x2="200" y2="140" stroke="url(#g2)"/>
+    <line x1="531" y1="240" x2="180" y2="280" stroke="url(#g2)"/>
+    <line x1="531" y1="240" x2="300" y2="380" stroke="url(#g2)"/>
+    <line x1="531" y1="240" x2="350" y2="100" stroke="url(#g2)"/>
+    <line x1="669" y1="240" x2="1000" y2="140" stroke="url(#g2)"/>
+    <line x1="669" y1="240" x2="1020" y2="300" stroke="url(#g2)"/>
+    <line x1="669" y1="240" x2="900" y2="400" stroke="url(#g2)"/>
+    <line x1="669" y1="240" x2="850" y2="100" stroke="url(#g2)"/>
+    <line x1="600" y1="160" x2="500" y2="60" stroke="url(#g2)"/>
+    <line x1="600" y1="160" x2="700" y2="50" stroke="url(#g2)"/>
+    <line x1="600" y1="320" x2="500" y2="430" stroke="url(#g2)"/>
+    <line x1="600" y1="320" x2="720" y2="440" stroke="url(#g2)"/>
+    <!-- Cross connections -->
+    <line x1="200" y1="140" x2="350" y2="100" stroke="#c47a2a" stroke-width="0.5" opacity="0.12"/>
+    <line x1="1000" y1="140" x2="850" y2="100" stroke="#2d6a4f" stroke-width="0.5" opacity="0.12"/>
+    <line x1="180" y1="280" x2="300" y2="380" stroke="#7c5c3c" stroke-width="0.5" opacity="0.12"/>
+    <line x1="1020" y1="300" x2="900" y2="400" stroke="#2d6a4f" stroke-width="0.5" opacity="0.12"/>
+  </g>
+
+  <!-- Network nodes -->
+  <g filter="url(#glow)">
+    <circle cx="200" cy="140" r="6" fill="#c47a2a" opacity="0.6"/>
+    <circle cx="180" cy="280" r="5" fill="#2d6a4f" opacity="0.5"/>
+    <circle cx="300" cy="380" r="4" fill="#7c5c3c" opacity="0.5"/>
+    <circle cx="350" cy="100" r="5" fill="#c47a2a" opacity="0.55"/>
+    <circle cx="1000" cy="140" r="6" fill="#2d6a4f" opacity="0.6"/>
+    <circle cx="1020" cy="300" r="5" fill="#c47a2a" opacity="0.5"/>
+    <circle cx="900" cy="400" r="4" fill="#7c5c3c" opacity="0.5"/>
+    <circle cx="850" cy="100" r="5" fill="#2d6a4f" opacity="0.55"/>
+    <circle cx="500" cy="60" r="4" fill="#c47a2a" opacity="0.45"/>
+    <circle cx="700" cy="50" r="5" fill="#2d6a4f" opacity="0.5"/>
+    <circle cx="500" cy="430" r="5" fill="#7c5c3c" opacity="0.45"/>
+    <circle cx="720" cy="440" r="4" fill="#c47a2a" opacity="0.45"/>
+  </g>
+
+  <!-- Distant nodes for depth -->
+  <g opacity="0.2">
+    <circle cx="80" cy="80" r="2" fill="#c47a2a"/>
+    <circle cx="120" cy="400" r="1.5" fill="#2d6a4f"/>
+    <circle cx="1100" cy="80" r="2" fill="#2d6a4f"/>
+    <circle cx="1080" cy="420" r="1.5" fill="#c47a2a"/>
+    <circle cx="50" cy="250" r="1.5" fill="#7c5c3c"/>
+    <circle cx="1150" cy="200" r="2" fill="#7c5c3c"/>
+    <circle cx="450" cy="470" r="1.5" fill="#c47a2a"/>
+    <circle cx="780" cy="20" r="1.5" fill="#2d6a4f"/>
+  </g>
+
+  <!-- Data flow particles -->
+  <g opacity="0.4">
+    <circle cx="400" cy="190" r="2" fill="#c47a2a">
+      <animate attributeName="opacity" values="0.15;0.5;0.15" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="330" cy="220" r="2" fill="#2d6a4f">
+      <animate attributeName="opacity" values="0.5;0.15;0.5" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="800" cy="190" r="2" fill="#7c5c3c">
+      <animate attributeName="opacity" values="0.15;0.5;0.15" dur="2.8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="870" cy="220" r="2" fill="#c47a2a">
+      <animate attributeName="opacity" values="0.3;0.6;0.3" dur="3.2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="550" cy="150" r="2" fill="#c47a2a">
+      <animate attributeName="opacity" values="0.2;0.55;0.2" dur="2.2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="650" cy="340" r="2" fill="#2d6a4f">
+      <animate attributeName="opacity" values="0.45;0.1;0.45" dur="2.7s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Bottom accent line -->
+  <line x1="0" y1="490" x2="1200" y2="490" stroke="url(#g2)" stroke-width="1" opacity="0.2"/>
+
+  <!-- Code elements -->
+  <g font-family="'Courier New', monospace" font-size="10" opacity="0.06" fill="#7c5c3c">
+    <text x="60" y="170">01101001</text>
+    <text x="1050" y="370">10110100</text>
+    <text x="100" y="450">model.load()</text>
+    <text x="950" y="80">inference()</text>
+    <text x="40" y="320">llm.run()</text>
+    <text x="1060" y="180">local://</text>
+  </g>
+
+  <!-- Circuit traces -->
+  <g stroke="#c47a2a" stroke-width="0.5" opacity="0.06" fill="none">
+    <path d="M 0,200 L 60,200 L 60,160 L 120,160"/>
+    <path d="M 0,300 L 40,300 L 40,340 L 100,340"/>
+    <path d="M 1200,180 L 1140,180 L 1140,220 L 1080,220"/>
+    <path d="M 1200,350 L 1160,350 L 1160,310 L 1100,310"/>
+  </g>
+
+  <!-- Shield icon -->
+  <g transform="translate(600, 400)" opacity="0.1">
+    <path d="M 0,-20 L 14,-12 L 14,6 C 14,16 0,24 0,24 C 0,24 -14,16 -14,6 L -14,-12 Z" fill="none" stroke="url(#g1)" stroke-width="1.2"/>
+    <rect x="-5" y="-4" width="10" height="8" rx="1" fill="url(#g1)" opacity="0.3"/>
+    <circle cx="0" cy="-1" r="2" fill="url(#g1)" opacity="0.5"/>
+  </g>
+</svg>
